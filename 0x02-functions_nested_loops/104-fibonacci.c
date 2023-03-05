@@ -1,15 +1,16 @@
 #include <stdio.h>
 
 /**
- * main - prints the sum of all even Fibonacci numbers below 4000000
- *
- * Return: Always 0.
- */
+* main - prints the first 98 Fibonacci numbers, starting with 1 and 2.
+* Return: Always 0.
+*/
 
 int main(void)
- {
+{
 	int count;
-	unsigned long prev, last, sec_last, limit, ten_thousands, thousands, hundreds, tens, unit;	
+	unsigned long prev, last, sec_last, limit, thousands;
+	unsigned long hundreds, tens, unit;
+
 	count = 1;
 	printf("1, 2, ");
 	last = 2;
@@ -18,17 +19,15 @@ int main(void)
 	while (count <= 97)
 	{
 		prev = last;
-		last = last + sec_last ;
+		last = last + sec_last;
 		sec_last = prev;
 		if (last > limit)
 		{
-		       	ten_thousands = last / 10000;
-			thousands = (last % 10000) / 1000;
-			hundreds = ((last % 10000) % 1000) / 100;   
-			tens= (((last % 10000) % 1000) % 100) / 10;
-			unit= (((last % 10000) % 1000) % 100) % 10;
+			thousands = last / 1000;
+			hundreds = last % 1000 / 100;
+			tens = ((last % 1000) % 100) / 10;
+			unit = ((last % 1000) % 100) % 10;
 
-			printf("%lu", ten_thousands);
 			printf("%lu", thousands);
 			printf("%lu", hundreds);
 			printf("%lu", tens);
@@ -40,7 +39,7 @@ int main(void)
 		}
 		if (count != 97)
 		{
-			 printf(", ");
+			printf(", ");
 		}
 		count++;
 	}
