@@ -10,12 +10,12 @@ int main(void)
  {
 	int count;
 	unsigned long prev, last, sec_last, limit, ten_thousands, thousands, hundreds, tens, unit;	
-	count = 0;
+	count = 1;
 	printf("1, 2, ");
 	last = 2;
 	sec_last = 1;
 	limit = 1800000000000000000;
-	while (count <= 95)
+	while (count <= 97)
 	{
 		prev = last;
 		last = last + sec_last ;
@@ -38,7 +38,7 @@ int main(void)
 		{
 			 printf("%lu", last);
 		}
-		if (count != 95)
+		if (count != 97)
 		{
 			 printf(", ");
 		}
