@@ -23,7 +23,7 @@ int _atoi(char *s)
 		{
 			unit = s[i] - '0';
 			if (result > INT_MAX / 10 || result > (INT_MAX - unit) / 10)
-				return (sign * INT_MAX);
+				return (INT_MIN);
 
 			result = result * 10 + (unit);
 
