@@ -20,6 +20,10 @@ int main(void)
     printf("%d\n", nb);
     nb = _atoi("2147483648");
     printf("%d\n", nb);
+    nb = _atoi("juyt -2147483648");
+    printf("%d\n", nb);
+    nb = _atoi("21474836489876");
+    printf("%d\n", nb);
     nb = _atoi("0");
     printf("%d\n", nb);
     nb = _atoi("Suite 402");
