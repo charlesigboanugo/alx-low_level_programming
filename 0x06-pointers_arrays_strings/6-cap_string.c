@@ -1,36 +1,37 @@
 #include "main.h"
 
 /**
-* cap_string - capitalize a string
-* @s: a string
-*
-* Return: pointer to a string
-*/
+ * cap_string - capitalize all word of a string
+ * @s: string array
+ * Return: string array
+ */
 
 char *cap_string(char *s)
 {
-	int i, j, next;
-	char str[] = ",;.!?\"(){} \t\n";
+	int i;
+	int prev;
 
-	if (s[0] >= 'a' && s[0] <= 'z')
-		s[0] = s[0] - 32;
-		i++;
-
-	i = 0;
-	while (s[i] != '\0')
+	for (i = 0; s[i] != '\0'; i++)
 	{
-		j  = 0;
-		next = i + 1;
-		while (str[j] != '\0')
+		prev = i - 1;
+		if (s[i] >= 'a' && s[i] <= 'z')
 		{
-			if (s[i] == str[j] && s[next] >= 'a' && s[next] <= 'z')
-			{
-				s[next] = s[next] - 32;
-			}
-			j++;
+			if (i == 0)
+				s[i] = s[i] - 32;
+			else if (s[prev] >= 9 && s[prev] <= 10)
+				s[i] = s[i] - 32;
+			else if (s[prev] >= 32 && s[prev] <= 34)
+				s[i] = s[i] - 32;
+			else if (s[prev] >= 40 && s[prev] <= 41)
+				s[i] = s[i] - 32;
+			else if (s[prev] == 46)
+				s[i] = s[i] - 32;
+			else if (s[prev] == 59)
+				s[i] = s[i] - 32;
+			else if (s[prev] == 123 || s[prev] == 125)
+				s[i] = s[i] - 32;
 		}
-		i++;
-
 	}
+
 	return (s);
 }
