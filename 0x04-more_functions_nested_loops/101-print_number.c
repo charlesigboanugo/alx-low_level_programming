@@ -2,27 +2,6 @@
 #include "limits.h"
 
 /**
-* power - gets decimal places of an integer
-* @n: an integer
-*
-* Return: decimal place
-*/
-
-int power(int n)
-{
-	int place;
-
-	place = 1;
-	for (; n > 9; )
-	{
-		n = n / 10;
-		place *= 10;
-	}
-
-	return (place);
-}
-
-/**
  * print_number - prints an integer
  * @n: number to print
  *
@@ -31,7 +10,7 @@ int power(int n)
 
 void print_number(int n)
 {
-	int divisor, rem, place, num, cut;
+	int divisor, rem, num, cut;
 
 	cut = 0;
 	num = n;
@@ -47,9 +26,15 @@ void print_number(int n)
 		num = n * -1;
 		_putchar('-');
 	}
-
 	rem = num;
-	divisor = power(num);
+
+	divisor = 1;
+	for (; num > 9; )
+	{
+		num = num / 10;
+		divisor *= 10;
+	}
+
 	while (divisor >= 10)
 	{
 		_putchar('0' + (rem / divisor));
