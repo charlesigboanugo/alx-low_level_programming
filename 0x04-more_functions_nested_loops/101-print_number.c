@@ -1,22 +1,23 @@
-#include <math.h>
 #include "main.h"
 
 /**
- * power - exponents
- * @base: base
- * @exp: exponent
+ * power - finds decimal places of an integer
+ * @num: an integer;
  * Return: result (int)
  */
 
-int  power(int base, int exp)
+int  power(int num)
 {
-	int i, num;
+	int i, place;
 
-	num = 1;
-	for (i = 0; i < exp; ++i)
-		num *= base;
+	place = 1;
 
-	return (num);
+	for (; num > 9; )
+	{
+		num = num / 10;
+		place *= 10;
+	}
+	return (place);
 }
 
 /**
@@ -27,42 +28,22 @@ int  power(int base, int exp)
 
 void print_number(int n)
 {
-	int negative = 0;
-	int digit;
-	int divisor;
-	int begin = 0;
-	int place = 10;
+	int divisor, rem;
 
 	if (n < 0)
 	{
-		negative = 1;
 		n = n * -1;
+		_putchar('-');
 	}
-	while (place >= 0)
+
+	divisor = power(n);
+	rem = n;
+	while (divisor >= 10)
 	{
-		/*divisor = pow(10, place);*/
-		divisor = power(10, place);
-		digit = ((n / divisor) % 10);
-		if (digit == 0 && begin == 0)
-		{
-			place--;
-		}
-		else if (digit != 0 && begin == 0)
-		{
-			begin = 1;
-			if (negative == 1)
-				_putchar('-');
-			_putchar('0' + digit);
-			place--;
-		}
-		else
-		{
-			_putchar('0' + digit);
-			place--;
-		}
+		_putchar('0' + (rem / divisor));
+		rem %= divisor;
+		divisor /= 10;
 	}
-	if (digit == 0 && divisor == 1)
-	{
-		_putchar(48);
-	}
+	_putchar('0' + rem);
+	_putchar(10);
 }
