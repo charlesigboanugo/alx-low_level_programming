@@ -7,41 +7,43 @@
 
 int main(void)
 {
-	int count;
-	unsigned long prev, last, sec_last, limit;
-	unsigned long cut_1 cut_2;
+	unsigned long temp2, last, sec_last, limit;
+	unsigned long cut1A, cut1B, cut2A, cut2B, left, right;
+	int count, temp;
 
 	count = 3;
 	printf("1, 2, ");
 	last = 2;
 	sec_last = 1;
-	limit = 10000000000000000000;
-	cut_1 =
-	cut_2 =
-	cut_3 =
-	cut_4 =
+	limit = 1000000;
 	while (count <= 98)
 	{
-		if (last + sec_last > limit)
+		if (last + sec_last  > limit)
 		{
-			cut_1 = last / limit;
-			cut_2 = last % limit;
-			cut_3 = sec_last / limit;
-			cut_4 = sec_last % limit;
-			print("%lu%lu", cut_1 + cut_3, cut_2 + cut_4)		
+			right = (cut1B + cut2B) % limit;
+			temp = (cut1B + cut2B) / limit;
+			left = (cut1A + cut2A) + temp;
+			printf("%lu%lu", left, right);
+			cut1A = cut2A;
+			cut1B = cut2B;
+			cut2A = left;
+			cut2B = right;
 		}
 		else
 		{
-			prev = last;
+			temp2 = last;
 			last = last + sec_last;
-			sec_last = prev;
-			printf("%lu, ", last);
-
+			sec_last = temp2;
+			printf("%lu", last);
+			cut2A = last / limit;
+			cut2B = last % limit;
+			cut1A = sec_last / limit;
+			cut1B = sec_last % limit;
 		}
+		if (count < 98)
+			printf(", ");
 		count++;
 	}
-
 	printf("\n");
-
 	return (0);
 }
