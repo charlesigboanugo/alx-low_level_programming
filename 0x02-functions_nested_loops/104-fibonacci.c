@@ -7,7 +7,7 @@
 
 int main(void)
 {
-	unsigned long temp2, last, sec_last, limit;
+	unsigned long temp2, last, sec_last;
 	unsigned long cut1A, cut1B, cut2A, cut2B, left, right;
 	int count, temp;
 
@@ -15,13 +15,12 @@ int main(void)
 	printf("1, 2, ");
 	last = 2;
 	sec_last = 1;
-	limit = 1000000;
 	while (count <= 98)
 	{
-		if (last + sec_last  > limit)
+		if (last + sec_last  > 10)
 		{
-			right = (cut1B + cut2B) % limit;
-			temp = (cut1B + cut2B) / limit;
+			right = (cut1B + cut2B) % 10;
+			temp = (cut1B + cut2B) / 10;
 			left = (cut1A + cut2A) + temp;
 			printf("%lu%lu", left, right);
 			cut1A = cut2A;
@@ -35,10 +34,10 @@ int main(void)
 			last = last + sec_last;
 			sec_last = temp2;
 			printf("%lu", last);
-			cut2A = last / limit;
-			cut2B = last % limit;
-			cut1A = sec_last / limit;
-			cut1B = sec_last % limit;
+			cut2A = last / 10;
+			cut2B = last % 10;
+			cut1A = sec_last / 10;
+			cut1B = sec_last % 10;
 		}
 		if (count < 98)
 			printf(", ");
