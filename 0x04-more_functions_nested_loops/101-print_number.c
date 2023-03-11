@@ -10,13 +10,14 @@ void print_number(int n)
 {
 	int divisor, rem, place, num;
 
+	num = n;
 	if (n < 0)
 	{
-		n = n * -1;
+		num = n * -1;
 		_putchar('-');
 	}
 
-	num = n;
+	rem = num;
 	place = 1;
 	for (; num > 9; )
 	{
@@ -25,7 +26,6 @@ void print_number(int n)
 	}
 
 	divisor = place;
-	rem = n;
 	while (divisor >= 10)
 	{
 		_putchar('0' + (rem / divisor));
