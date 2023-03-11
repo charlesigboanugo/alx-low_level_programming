@@ -33,5 +33,4 @@ void print_number(int n)
 		divisor /= 10;
 	}
 	_putchar('0' + rem);
-	_putchar(10);
 }
