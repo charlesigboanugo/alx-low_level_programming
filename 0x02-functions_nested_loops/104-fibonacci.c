@@ -8,42 +8,30 @@
 int main(void)
 {
 	int count;
-	unsigned long prev, last, sec_last, limit, thousands;
-	unsigned long hundreds, tens, unit;
+	unsigned long prev, last, sec_last, limit;
+	unsigned long cut_1 cut_2;
 
 	count = 3;
 	printf("1, 2, ");
 	last = 2;
 	sec_last = 1;
+	limit = 10000000000000000000;
+	cut_1 =
+	cut_2 =
+	cut_3 =
+	cut_4 =
 	while (count <= 98)
 	{
-		switch (count)
+		if (last + sec_last > limit)
 		{
-			case 93:
-			printf("1974027421");
-			printf("9868223167, ");
-			break;
-			case 94:
-			printf("3194043463");
-			printf("4990099905, ");
-			break;
-			case 95:
-			printf("5168070885");
-			printf("4858323072, ");
-			break;
-			case 96:
-			printf("8362114348");
-			printf("9848422977, ");
-			break;
-			case 97:
-			printf("1353018523");
-			printf("44706746049, ");
-			break;
-			case 98:
-			printf("2189229958");
-			printf("34555169026");
-			break;
-			default:
+			cut_1 = last / limit;
+			cut_2 = last % limit;
+			cut_3 = sec_last / limit;
+			cut_4 = sec_last % limit;
+			print("%lu%lu", cut_1 + cut_3, cut_2 + cut_4)		
+		}
+		else
+		{
 			prev = last;
 			last = last + sec_last;
 			sec_last = prev;
