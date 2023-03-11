@@ -1,31 +1,40 @@
 #include "main.h"
+#include "limits.h"
 
 /**
  * print_number - prints an integer
  * @n: number to print
- * Return void
+ *
+ * Return: void
  */
 
 void print_number(int n)
 {
-	int divisor, rem, place, num;
+	int divisor, rem, num, cut;
 
-	if (n < 0)
+	cut = 0;
+	num = n;
+	if (n == INT_MIN)
 	{
-		n = n * -1;
+		num = INT_MAX / 10;
+		cut = 1;
 		_putchar('-');
 	}
 
-	num = n;
-	place = 1;
+	if (n < 0 && n > INT_MIN)
+	{
+		num = n * -1;
+		_putchar('-');
+	}
+	rem = num;
+
+	divisor = 1;
 	for (; num > 9; )
 	{
 		num = num / 10;
-		place *= 10;
+		divisor *= 10;
 	}
 
-	divisor = place;
-	rem = n;
 	while (divisor >= 10)
 	{
 		_putchar('0' + (rem / divisor));
@@ -33,4 +42,7 @@ void print_number(int n)
 		divisor /= 10;
 	}
 	_putchar('0' + rem);
+
+	if (cut == 1)
+		_putchar('0' + 8);
 }
