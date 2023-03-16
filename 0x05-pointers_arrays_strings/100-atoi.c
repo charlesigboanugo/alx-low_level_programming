@@ -1,5 +1,3 @@
-#include <limits.h>
-
 /**
 * _atoi - convert a string to an integer.
 * @s: a string
@@ -9,7 +7,8 @@
 
 int _atoi(char *s)
 {
-	int i, sign, result, unit;
+	int i, sign, unit;
+	unsigned int result;
 
 	sign = 1;
 	result = 0;
@@ -22,9 +21,6 @@ int _atoi(char *s)
 		else if (s[i] >= '0' && s[i] <= '9')
 		{
 			unit = s[i] - '0';
-			if (result > INT_MAX / 10 || result > (INT_MAX - unit) / 10)
-				return (INT_MIN);
-
 			result = result * 10 + (unit);
 
 			if (s[i + 1] < '0' || s[i + 1] > '9')
@@ -33,6 +29,7 @@ int _atoi(char *s)
 		i++;
 
 	}
-
-	return (sign * result);
+	if (sign < 0)
+		return (-result);
+	return (result);
 }
