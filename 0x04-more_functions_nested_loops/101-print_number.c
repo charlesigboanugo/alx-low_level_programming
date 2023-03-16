@@ -1,5 +1,4 @@
 #include "main.h"
-#include "limits.h"
 
 /**
  * print_number - prints an integer
@@ -10,24 +9,20 @@
 
 void print_number(int n)
 {
-	int divisor, rem, num, cut;
+	int divisor;
+	unsigned int num, rem;
 
-	cut = 0;
-	num = n;
-	if (n == INT_MIN)
-	{
-		num = INT_MAX / 10;
-		cut = 1;
-		_putchar('-');
-	}
-
-	if (n < 0 && n > INT_MIN)
+	if (n < 0)
 	{
 		num = n * -1;
 		_putchar('-');
 	}
-	rem = num;
+	else
+	{
+		num = n;
+	}
 
+	rem = num;
 	divisor = 1;
 	for (; num > 9; )
 	{
@@ -43,6 +38,4 @@ void print_number(int n)
 	}
 	_putchar('0' + rem);
 
-	if (cut == 1)
-		_putchar('0' + 8);
 }
