@@ -1,4 +1,4 @@
-include "main.h"
+#include "main.h"
 
 /**
  * prime_finder - finds out if a number is prime recursively
