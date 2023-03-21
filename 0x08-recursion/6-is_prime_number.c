@@ -14,7 +14,7 @@ int check_prime(int x, int sqr)
 		return (0);
 	if (sqr * sqr > x)
 		return (1);
-	check_prime(x, ++sqr);
+	return echeck_prime(x, ++sqr);
 }
 int is_prime_number(int n)
 {

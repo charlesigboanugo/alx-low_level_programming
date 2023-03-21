@@ -2,39 +2,25 @@
 
 /**
  * check_int - checks integer as candidate for square root
- * @square: square integer
+ * @sqr: square of integer
  * @x: integer
  * Return: 1 if
  */
 
-int check_int(int square, int x)
+int check_int(int x, int sqr)
 {
-	if (x * x == square)
-		return (x);
-	else if (x > square / x)
-		return (check_int(square, x - 1));
-	else if (x < square / x)
-		return (check_int(square, x + 1));
-	else
+	if (sqr * sqr > x || x < 1)
 		return (-1);
+	if (sqr * sqr == x)
+		return (sqr);
+	return check_int(x, ++sqr);
 }
-
-/**
- * _sqrt_recursion - returns the natural square root of a number
- * @n: integer
- * Return: integer - square root, if none returns -1
- */
-
 int _sqrt_recursion(int n)
 {
-	int start;
+	int sqrt_check;
 
-	start = 1;
+	sqrt_check = check_int(n, 1);
 
-	if (n < 0)
-		return (-1);
-	else if (n == 1)
-		return (1);
-	else
-		return (check_int(n, start));
+	return (sqrt_check);
 }
+
