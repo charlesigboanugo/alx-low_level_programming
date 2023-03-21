@@ -29,12 +29,14 @@ int length(char *s)
 
 int compare(char *s, int beg, int end)
 {
-	if (beg >= end)
-		return (1);
-	else if (s[end] != s[beg])
+	if (s[beg] != s[end])
 		return (0);
+	else if (beg == end && s[beg] == s[end])
+		return (1);
+	else if (beg == end - 1 && s[beg] == s[end])
+		return (1);
 	else
-		return (compare(s, ++beg, --end));
+		return (compare(s, beg + 1, end - 1));
 }
 
 /**
