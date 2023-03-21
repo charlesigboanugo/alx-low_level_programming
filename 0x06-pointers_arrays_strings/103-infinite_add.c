@@ -1,64 +1,87 @@
-#include "main.h"
-#include <stdio.h>
-
 /**
-* infinite_add - encodes a string using rot13
-* @n1: a pointer to char
-* @n2: a pointer to char
-* @r: a buffer
-* @size_r: size of buffer
-*
-* Return: a pointer to a r
-*/
-
+ * infinite_add - adds two integers stored as strings
+ *
+ * @n1: first integer string to add
+ * @n2: second integer string to add
+ * @r: array to store resulting string in
+ * @size_r: size of array r
+ *
+ * Return: the summed string in r. If r is too small for the result,
+ * return 0;
+ */
 char *infinite_add(char *n1, char *n2, char *r, int size_r)
 {
-	int i, s, len1, len2, carry;
-      	char a, b;
-	int max_len;
-	len1 = 0;
-	while (*n1 != '\0')
-	{
-		len1++;
-		n1++;
-	}
+	int carry = 0, index = 0, index2;
+	char *s1 = n1, *s2 = n2;
 
-	len2 = 0;
-	while (*n2 != '\0')
+	while (*s1 != 0)
+		s1++;
+	while (*s2 != 0)
+		s2++;
+	size_r--;
+	r[size_r] = 0;
+	s1--;
+	s2--;
+	while (s2 != n2 - 1 && s1 != n1 - 1)
 	{
-		len2++;
-		n2++;
-	}
-	max_len = len1 > len2 ? len1 : len2;
-
-	s = 0;
-	carry = 0;
-	i = 0;
-	while (i < max_len)
-	{
-		if (s == size_r - 2)
+		r[index] = *s2 - '0' + *s1 + carry;
+		carry = 0;
+		if (r[index] > '9')
+		{
+			carry++;
+			r[index] -= 10;
+		}
+		index++;
+		s2--;
+		s1--;
+		if (size_r == index && (s1 != n1 - 1 || s2 != n2 - 1 || carry == 1))
 			return (0);
-		if (i >= len1)
-			a = 0;
-		else
-			a = n1[len1 - i - 1] - '0';
-			printf("n1 = %c", n1[i]);
-			
-		if (i >= len2)
-		{
-			b = 0;
-		}
-		else
-		{
-			b = n2[len2 - i - 1] - '0';
-		}
-		r[s] = (a + b + carry) % 10;
-		carry = (a + b + carry) / 10;
-		printf("rs = %d\n", r[s]); 
-		printf("rstr = %s\n", r); 
-	i++;
-	s++;
 	}
-	printf("finalcarry = %d\n", carry);
+	while (s1 != n1 - 1)
+	{
+		r[index] = *s1 + carry;
+		carry = 0;
+		if (r[index] > '9')
+		{
+			carry = 1;
+			r[index] -= 10;
+		}
+		s1--;
+		index++;
+		if (size_r == index && (s1 != n1 - 1 ||  carry == 1))
+			return (0);
+	}
+	while (s2 != n2 - 1)
+	{
+		r[index] = *s2 + carry;
+		carry = 0;
+		if (r[index] > '9')
+		{
+			carry = 1;
+			r[index] -= 10;
+		}
+		s2--;
+		index++;
+		if (size_r == index && (s2 != n2 - 1 || carry == 1))
+			return (0);
+	}
+	if (carry == 1)
+	{
+		r[index] = '1';
+		r[index + 1] = 0;
+	}
+	else
+	{
+		r[index--] = 0;
+	}
+	index2 = 0;
+	while (index2 <= index)
+	{
+		carry = r[index];
+		r[index] = r[index2];
+		r[index2] = carry;
+		index--;
+		index2++;
+	}
 	return (r);
 }
