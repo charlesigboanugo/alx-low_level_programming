@@ -1,27 +1,30 @@
-#include "main.h"
 #include <stdio.h>
-
 /**
- * check_int - checks integer as candidate for square root
- * @sqr: square of integer
- * @x: integer
- * Return: 1 if
+ * prime_finder - finds out if a number is prime recursively
+ *
+ * @x: number to determine if prime
+ * @y: number to check if divisor
+ *
+ * Return: 1 if prime, 0 otherwise
  */
-
-int check_prime(int x, int sqr)
+int prime_finder(int x, int y)
 {
-	if (sqr * sqr == x || x <= 1)
-		return (0);
-	if (sqr * sqr > x)
+	if (x == y)
 		return (1);
-	return echeck_prime(x, ++sqr);
+	if (!(x % y))
+		return (0);
+	return (prime_finder(x, y + 1));
 }
+/**
+ * is_prime_number - returns if a number is prime
+ *
+ * @n: number to determine primeness of
+ *
+ * Return: 1 if prime, 0 otherwise
+ */
 int is_prime_number(int n)
 {
-	int prime_check;
-
-	prime_check = check_prime(n, 2);
-
-	return (prime_check);
+	if (n < 2)
+		return (0);
+	return (prime_finder(n, 2));
 }
-
