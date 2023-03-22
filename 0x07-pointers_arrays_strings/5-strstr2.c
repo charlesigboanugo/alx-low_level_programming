@@ -14,7 +14,7 @@ char *_strstr(char *haystack, char *needle)
 	char *h = haystack;
 	char *n = needle;
 
-	if (*n == '\0')
+	if (*n < 32)
 		return (h);
 
 	while (*h != '\0')
