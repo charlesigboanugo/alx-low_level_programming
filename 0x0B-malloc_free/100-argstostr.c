@@ -10,32 +10,37 @@
  */
 char *argstostr(int ac, char **av)
 {
-	int size = 0, i;
-	char *ptr, *ret, *retptr;
+	char *ptr, *ret;
+	unsigned int i, j, k, size;
 
-	if (ac == 0 || !av)
+	if (ac == 0 || av == NULL)
 		return (NULL);
 
+	size = 1;
 	for (i = 0; i < ac; i++)
 	{
-		ptr = av[i];
-		while (*ptr++)
+		for (j = 0; *(av[i] + j) != '\0'; j++)
 			size++;
 	}
 
-	ret = malloc(size + 1 + ac);
-	if (!ret)
-		return (NULL);
+	ptr  = malloc(sizeof(*ptr) * (size + 1));
+	if (!ptr)
+		return(NULL);
 
-	retptr = ret;
-	for (i = 0; i < ac; i++)
+	ret = ptr;
+	for (i = 0, k = 0; k < size - 1; i++)
 	{
-		for (ptr = av[i]; *ptr; ptr++, retptr++)
+		j = 0;
+		while (*(av[i] + j) != '\0')
 		{
-			*retptr = *ptr;
+			*ptr++ = *(av[i] + j);
+			j++;
+			k++;
 		}
-		*retptr++ = '\n';
+		*ptr++ = '\n';
 	}
+
+	*ptr = '\0';
 
 	return (ret);
 }
