@@ -47,5 +47,6 @@ char **strtow(char *str)
 			i++;
 		}
 	}
+	arr[i] = 0;
 	return (arr);
 }
