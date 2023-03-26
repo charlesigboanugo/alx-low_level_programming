@@ -9,44 +9,44 @@
  */
 char **strtow(char *str)
 {
-	char **arr, *ptr = str, *sptr;
-	int i, j, arrsize = 0, wsize = 0;
+	char **ret, *ptr = str;
+	int wc = 0, i = 0;
 
-	if (*ptr == '\0' || !ptr)
-		return (NULL);
-
-	for (; *ptr; ptr++)
+	if (str == 0 || *str == 0)
+		return (0);
+	while (*ptr)
 	{
-		if ((*(ptr + 1) == 32 || *(ptr + 1) == '\0') && *ptr != 32)
-			arrsize++;
+		if (!(*ptr == ' ') && (*(ptr + 1) == ' ' || *(ptr + 1) == 0))
+			wc++;
+		ptr++;
 	}
-
-	arr = malloc(sizeof(*arr) * (arrsize + 1));
-	if (!arr)
+	if (wc == 0)
 		return (NULL);
-
-	ptr = str;
-	for (i = 0; i < arrsize; ptr++)
+	ret = malloc((wc + 1) * sizeof(char *));
+	if (ret == 0)
+		return (0);
+	while (*str)
 	{
-		if ((*(ptr + 1) == 32 || *(ptr + 1) == '\0') && *ptr != 32)
+		if (*str != ' ')
 		{
-			sptr = ptr;
-			wsize = 0;
-			for (; *sptr != 32 && sptr >= str; sptr--)
-				wsize++;
-			arr[i] = malloc(sizeof(*arr[i]) * (wsize + 1));
-			if (!arr[i])
+			for (ptr = str, wc = 0; *ptr != ' ' && *ptr != 0;)
+				wc++, ptr++;
+			ret[i] = malloc(wc + 1);
+			if (ret[i] == 0)
 			{
-				while (--i >= 0)
-					free(arr[i]);
-				free(arr);
-				return (NULL);
+				while (i >= 0)
+					free(ret[--i]);
+				free(ret);
+				return (0);
 			}
-			for (j = 0; j < wsize; j++)
-				arr[i][j] = *++sptr;
-			i++;
+			ptr = ret[i++];
+			while (*str != ' ' && *str != 0)
+				*ptr++ = *str++;
+			*ptr = 0;
 		}
+		else
+			str++;
 	}
-	arr[i] = 0;
-	return (arr);
+	ret[i] = 0;
+	return (ret);
 }
