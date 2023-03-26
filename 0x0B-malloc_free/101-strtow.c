@@ -10,7 +10,7 @@
 char **strtow(char *str)
 {
 	char **arr, *ptr = str, *sptr;
-	unsigned int i, j, arrsize = 0, wsize = 0;
+	int i, j, arrsize = 0, wsize = 0;
 
 	if (*ptr == '\0' || !ptr)
 		return (NULL);
