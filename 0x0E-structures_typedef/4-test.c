@@ -1,4 +1,4 @@
-#include "testdog.h"
+#include "dog.h"
 #include <stdlib.h>
 
 size_t _strlen(char *s)
