@@ -1,145 +1,143 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include "main.h"
 
 /**
-* check_num - checks the validity of a number extracted from a string
-* @str: a pointer to a string
-* 
-* return: 0 if its a valid number otherwise 1
-*/
-
-int check_num(char *str)
+ * _prntstr - prints a string
+ *
+ * @s: string to print
+ */
+void _prntstr(char *s)
 {
-	for (; *str != 0; str++)
-	{
-		if (*str < '0' || *str > '9')
-			return (1);
-	}		
-	return (0);
+	while (*s)
+		_putchar(*s++);
 }
 
 /**
-* str_len - calculates the length of  a string
-* @str: a pointer to a string
-* 
-* return: returns the length of string
-*/
-
-int str_len(char *str)
+ * numstrchk - checks arg array to see if the are numeric strings, converts
+ * from ascii to byte int, and returns their length. Segfault on null pointer.
+ *
+ * @s: string to check
+ *
+ * Return: Length of string. Exit 98 if not numeric.
+ */
+long int numstrchk(char *s)
 {
-	int len = 0;
+	long int len = 0;
 
-	for (; *str != 0; str++)
-	       len++;	
-
-	return(len);
-}
-
-/**
-* _realloc - reallocates the size of a memory
-* @:mem: a pointer to a memory
-* @nsize: the new size
-*
-* returm: a pointer to the reallocated memory
-*/
-
-char *_realloc(char *mem, int nsize)
-{
-	char *ptr, *wtr, *str = mem;
-
-	ptr = malloc(nsize);
-	if (!ptr)
+	if (*s == 0)
 	{
-		printf("Error, unable to allocate space in memory\n");
-		exit(98);
-	}
-	wtr = ptr;
-	wtr++;
-	for (; *str != 0; str++, wtr++)
-		*wtr = *str;
-
-	free(mem);
-	return (ptr);
-}
-
-
-/**
-* main - prints the product of two string numbers
-* @argc: contains the number of integers provided as argument to the program
-* @argv: an array of arguments to the program
-*
-* return: always 0; 
-*/
-
-int main(int argc, char *argv[])
-{
-	int i, n, len1, len2, size, carry, rem;
-	char *mul, *num1, *num2, *ope1, *hold, *ope2, *ptr, *wtr;
-
-	if (argc != 3 || check_num(argv[1]) || check_num(argv[2]))
-	{
-		printf("Error\n");
+		_prntstr("Error\n");
 		exit(98);
 	}
 
-	len1 = str_len(argv[1]);
-	len2 = str_len(argv[2]);
-	size = len1 + len2;
-	mul = malloc(sizeof(*mul) * size);
-
-	if (mul == NULL)
+	while (*s)
 	{
-		printf("Error\n");
-		exit(98);
-	}
-	
-	if (len1 > len2)
-	{
-		num1 = argv[1];
-		ope1 = num1 + len1 - 1;
-		hold = ope1;
-		num2 = argv[2];
-		ope2 = num2 + len2 - 1;
-	}
-	else
-	{
-		num1 = argv[2];
-		ope1 = num1 + len2 - 1;
-		hold = ope1;
-		num2 = argv[1];
-		ope2 = num2 + len1 - 1;
-	}
-
-	ptr = mul;
-	for (i = 0; i < size - 1; ptr++, i++)
-		*ptr = '0';
-			
-	ptr--;
-	wtr = ptr;
-	for (; ope2 >= num2; ope2--, wtr--)
-	{
-		ope1 = hold;
-		ptr = wtr;
-		carry = 0;
-		for (; ope1 >= num1; ope1--, ptr--)
+		if (*s < '0' || *s > '9')
 		{
-			n = carry;
-			rem = (*ope1 - '0') * (*ope2 - '0');
-			carry = ((*ptr - '0') + rem + n) / 10;
-			*ptr = '0' + ((*ptr - '0') + rem + n) % 10;
-			if (ope1 == num1 && ope2 > num2 && carry > 0)
-				*--ptr = '0' + carry;
+			_prntstr("Error\n");
+			exit(98);
 		}
+		*s -= '0';
+		len++;
+		s++;
 	}
-	
-	if (carry > 0)
-	{
-		mul = _realloc(mul, size + 1);
-		*mul = '0' + carry;
-	}	
+	return (len);
+}
 
-	printf("%s\n", mul);
-	free(mul);
+/**
+ * _calloc_buffer - allocate a block of memory of size * num and init to '0'
+ *
+ * @num: number of elements to allocate
+ * @size: size of element
+ *
+ * Return: pointer to allocated space, exit 98 on failure
+ */
+void *_calloc_buffer(long int num, long int size)
+{
+	void *ret;
+	char *ptr;
+
+	ret = malloc(num * size);
+	if (ret == 0)
+	{
+		exit(98);
+	}
+
+	size = size * num;
+	ptr = ret;
+	ptr[--size] = 0;
+	while (size--)
+		ptr[size] = '0';
+
+	return (ret);
+}
+
+/**
+ * trimzero - moves pointer position to after last leading 0 in a string,
+ * or last zero if all zeros
+ *
+ * @s: char * we want to move
+ *
+ * Return: new position
+ */
+char *trimzero(char *s)
+{
+	while (*s == '0')
+		if (*(s + 1) != 0)
+			s++;
+		else
+			break;
+	return (s);
+}
+
+/**
+ * main - multiply two  positive integer strings of arbitrary size
+ *
+ * @ac: number of arguments
+ * @av: arugments
+ *
+ * Return: 0 if successful, 98 if failure
+ */
+int main(int ac, char **av)
+{
+	long int len1, len2, lenres, i, j;
+	char *res;
+
+	if (ac != 3)
+	{
+		_prntstr("Error\n");
+		return (98);
+	}
+	av[2] = trimzero(av[2]);
+	av[1] = trimzero(av[1]);
+	if (*av[1] == '0' || *av[2] == '0')
+	{
+		_prntstr("0\n");
+		return (0);
+	}
+	len1 = numstrchk(av[1]);
+	len2 = numstrchk(av[2]);
+	lenres = len1 + len2;
+	res = _calloc_buffer(lenres + 1, sizeof(char));
+
+	for (i = lenres - 1, len1--; len1 >= 0; len1--, i += len2 - 1)
+		for (j = len2 - 1; j >= 0; j--, i--)
+		{
+			res[i] = (av[1][len1] * av[2][j] % 10) + res[i];
+			res[i - 1] = (av[1][len1] * av[2][j] / 10) + res[i - 1];
+			if (res[i] > '9')
+			{
+				res[i] -= 10;
+				res[i - 1]++;
+			}
+		}
+
+	if (*res == '0')
+		_prntstr(res + 1);
+	else
+		_prntstr(res);
+	_putchar('\n');
+	free(res);
 
 	return (0);
 }
