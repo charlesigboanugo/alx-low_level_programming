@@ -2,27 +2,14 @@
 #include <stdlib.h>
 #include "lists.h"
 
-listint_t *add_nodeint(listint_t **head, const int n)
+void free_listint(listint_t *head)
 {
-	listint_t *new = NULL, *ptr = NULL;
-	
-	if (head == NULL)
-		return (NULL);
-	new = malloc(sizeof(listint_t));
-	if (new == NULL)
-		return (NULL);
-	new->n = n;
-	new->next = NULL;
-	ptr = *head;
-	if (ptr != NULL)
+	listint_t *ptr;
+
+	while (head != NULL)
 	{
-		while (ptr->next != NULL)
-		{
-			ptr = ptr->next;
-		}
-		ptr->next = new;
+		ptr = head;
+		head = head->next;
+		free(ptr);
 	}
-	else
-		*head = new;
-	return (new);
 }
