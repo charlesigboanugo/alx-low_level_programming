@@ -2,16 +2,27 @@
 #include <stdlib.h>
 #include "lists.h"
 
-size_t print_listint(const listint_t *h)
+listint_t *add_nodeint(listint_t **head, const int n)
 {
-	size_t size;
-
-	size = 0;
-	while (h != NULL)
+	listint_t *new = NULL, *ptr = NULL;
+	
+	if (head == NULL)
+		return (NULL);
+	new = malloc(sizeof(listint_t));
+	if (new == NULL)
+		return (NULL);
+	new->n = n;
+	new->next = NULL;
+	ptr = *head;
+	if (ptr != NULL)
 	{
-		size++;
-		printf("%i\n", h->n);
-		h = h->next;
+		while (ptr->next != NULL)
+		{
+			ptr = ptr->next;
+		}
+		ptr->next = new;
 	}
-	return (size);
+	else
+		*head = new;
+	return (ptr);
 }
