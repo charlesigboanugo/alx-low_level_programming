@@ -29,6 +29,6 @@ int delete_nodeint_at_index(listint_t **head, unsigned int index)
 	else
 		*head = (*head)->next;
 	ptr->next = NULL;
-	free_listint2(&ptr);
+	free(ptr);
 	return (1);
 }
