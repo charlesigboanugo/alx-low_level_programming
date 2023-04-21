@@ -2,7 +2,7 @@
 #include "main.h"
 
 /**
-print_binary - prints the binary form of a number
+*print_binary - prints the binary form of a number
 * @n: an unsigned int
 *
 * Return: void
