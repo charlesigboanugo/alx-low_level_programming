@@ -1,23 +1,28 @@
 #include <stdio.h>
-#include <unistd.h>
 #include "main.h"
+#include <limits.h>
 
 /**
-* get_bit - gets the value of bit at a given index
-* @n: a number
-* @index: index of bit
+* flip_bits - the number of bits you would need to flip to get from
+* one number to another
+* @n: a first number
+* @m: a second numer
 *
-* Return: the value of the bit
+* Return: number of bits to flip
 */
 
-int get_bit(unsigned long int n, unsigned int index)
+unsigned int flip_bits(unsigned long int n, unsigned long int m)
 {
-	unsigned long int c = 1ul << index;
+	unsigned int num;
+	unsigned long int c;
 
-	if (index > 63)
-		return (-1);
-	if (c & n)
-		return (1);
-	else
+	n = n ^ m;
+	if (n == 0)
 		return (0);
+	for (num = 0, c = 1ul << 63; c != 0; c >>= 1)
+{
+		if (c & n)
+			num++;
+	}
+	return (num);
 }
