@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <limits.h>
 #include "main.h"
+#include <limits.h>
 
 /**
  * main - check the code
@@ -9,25 +9,21 @@
  */
 int main(void)
 {
-    print_binary(0);
-    printf("\n");
-    print_binary(1);
-    printf("\n");
-    print_binary(98);
-    printf("\n");
-    print_binary(1024);
-    printf("\n");
-    print_binary((1 << 10) + 1);
-    printf("\n");
-    print_binary(1024);
-    printf("\n");
-    print_binary(1024);
-    printf("\n");
-    print_binary(1024);
-    printf("\n");
-    print_binary(ULONG_MAX);
-    printf("\n");
-    print_binary(954372342312);
-    printf("\n");
+    int n;
+
+    n = get_bit(1024, 10);
+    printf("%d\n", n);
+    n = get_bit(98, 1);
+    printf("%d\n", n);
+    n = get_bit(1024, 0);
+    printf("%d\n", n);
+    n = get_bit(1024, 64);
+    printf("%d\n", n);
+    n = get_bit(5, 0);
+    printf("%d\n", n);
+    n = get_bit(6, 0);
+    printf("%d\n", n);
+    n = get_bit(ULONG_MAX, 63);
+    printf("%d\n", n);
     return (0);
 }
