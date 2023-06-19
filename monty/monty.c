@@ -41,15 +41,85 @@ void nopfunc(stack_t **stack, unsigned int line_number)
 
 }
 
-int readline(int file)
+int read_trim_line(int file, char **line, unsigned int line_num)
 {
+	char *ptr, byte;
+	ssize_t bytes_read;
+	unsigned int index = 0;
 
+	ptr = malloc(sizeof(*ptr) * 99);
+	if (ptr == NULL)
+	{
+		print_err();
+		return (-1)
+	}
+	*line = ptr;
+	while (byte != '\n' && index < 99)
+	{
+		bytes_read = read(file, &byte, 1);
+		if (bytes_read == -1)
+		{
+			print_err();
+			return (-1);
+		}
+		if (bytes_read == 0)
+			break;
+		if (byte != ' ' && byte != '\n')
+		{
+			ptr[index] = byte;
+			index++;
+		}	
+
+	}
+	if (index == 0 && bytes_read == 0)
+		return (EOF);
+	if (index == 0)
+		return (0)
+	return (index)
 }
-void print_err_exit(int file, char *errmsg)
+
+char *get_opcode(char *line_buf, instruction_t *inst, unsigned int line_num)
 {
+	unsigned int i;
+
+	for(i = 0; i < 7; i++)
+	{
+		if (strstr(line, inst[i]->opcode) == line)
+			return (inst[i]->opcode);
+	}
+	print_err("", line_num);
+	return (NULL);
+}
+int *get_operand(char *line_buf, char *opcode, unsigned int line_num)
+{
+	int operand, sign = 1;
+	char *ptr;
+
+	ptr = line_buf + strlen(opcode);
+	for (; ptr != '\0'; ptr++)
+	{
+		if (*ptr = '-')
+			sign *= -1;
+		if (isdigit(*ptr))
+		{
+			operand =  (sign * atoi(*ptr));
+			return (&operand);
+		}
+	}
+	print_err("", line_num);
+	return (NULL);
+}
+int opcode_req_arg(opcode)
+{
+	if (strcmp(opcode, "push") == 0)
+		return 1;
+	return (0);
+}
+void clean_err_exit(int file, char *line)
+{
+	free_buff(line)
 	close(file);
 	free(topstack);
-	dprintf(STDERR_FILENO, "%s", errmsg);
 	exit(EXIT_FAILURE);
 
 }
@@ -64,15 +134,13 @@ void print_err_exit(int file, char *errmsg)
 */
 
 int main(int ac, char **av)
-	int file;
-	unsigned int line_num = 0;
-	char *opcode = NULL;
-	int *operand = NULL;
 	instruction_t inst[7] = {{"push", "pushfunc"}, {"pall", "pallfunc"},
 				 {"pint", "pintfunc"}, {"pop", "popfunc"},
 				 {"swap", "swapfunc"}, {"add", "addfunc"},
-				 {"nop", "nopfunc"}}
-
+				 {"nop", "nopfunc"}};
+	int file, *operand = NULL, byte_read;
+	unsigned int line_num = 0;
+	char *opcode = NULL, *line == NULL;
 	if (ac != 2)
 	{
 		dprintf(STDERR_FILENO, "USAGE: monty file\n");
@@ -86,32 +154,34 @@ int main(int ac, char **av)
 		exit(EXIT_FAILURE);
 	}
 	
-	while (line != -1 || line !=  EOF)
+	while (1)
 	{
-		line = readline(file);
-		line_num++;
-		opcode = get_opcode(line);
-		if (opcode == NULL)
+		free_buff(line);
+		byte_read = read_trim_line(file, &line, line_num);
+		if (byte_read == -1)
+			clear_err_exit(file, line);
+		if (byte_read == EOF)
+			break;
+		if (byte_read == 0)
 		{
-			close(file)
-			exit(EXIT_FAILURE);
+			line_num++;
+			continue;
 		}
+		opcode = get_opcode(line, inst, line_num);
+		if (opcode == NULL)
+			clear_err_exit(file, line);
 		if (opcode_req_arg(opcode))
 		{
-			operand = get_operand(opcode);
+			operand = get_operand(line, opcode, line_num);
 			if (operand == NULL)
-			{
-				close(file);
-				exit(EXIT_FAILURE);
-			}
+				clear_err_exit(file, line);
 		}
 		if (exec_instr(opcode, operand, line_num) == -1)
-		{
-			close(file);
-			exit(EXIT_FAILURE);
-		}
+			clear_err_exit(file, line);
+		line_num++;
 
 	}
+	free_buff(line);
 	close(file);
 	free_stk(topstack);
 }
