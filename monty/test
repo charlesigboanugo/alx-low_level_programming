@@ -1,15 +1,17 @@
-        pall
-
-      push u -   47uy7
-  pop
-pall
-push uuop[;lmjcjh -80;;;          
-    pall   
-push50
-pall
-add
-pall
-push - + j uq - - io[2
-pall
-add 09 mkl
-pall
+pstr
+push 1
+push 2
+push 3
+push 4
+pchar
+push 0
+push 110
+push 0
+push 108
+push 111
+push 111
+push 104
+push 99
+push 83
+pchar
+pstr

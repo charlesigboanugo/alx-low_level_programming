@@ -227,10 +227,11 @@ void rotlfunc(stack_t **stack, unsigned int line_num)
 	{
 		while (ptr->next->next != NULL)
 			ptr = ptr->next;
-		ptr->next = *stack;
+		ptr->next->next = *stack;
 		*stack = (*stack)->next;
-		ptr->next->prev = ptr;
-		ptr->next->next = NULL;
+		(*stack)->prev = NULL;
+		ptr->next->next->prev = ptr->next;
+		ptr->next->next->next = NULL;
 	}
 }
 
@@ -242,10 +243,11 @@ void rotrfunc(stack_t **stack, unsigned int line_num)
 	{
 		while (ptr->next->next != NULL)
 			ptr = ptr->next;
-		ptr->next = *stack;
-		ptr->prev = NULL;
-		(*stack)->prev = ptr;
-		*stack = ptr;
+		ptr->next->next = *stack;
+		(*stack)->prev = ptr->next;
+		*stack = ptr->next;
+		ptr->next->prev = NULL;
+		ptr->next = NULL;
 	}
 }
 
@@ -254,7 +256,7 @@ int exec_instr(instruction_t *inst, char *opcode, unsigned int line_num)
 	void (*op_func)(stack_t **stack, unsigned int line_number);
 	unsigned int i;
 
-	for (i = 0; i < 7; i++)
+	for (i = 0; i < 16; i++)
 	{
 		if (strcmp(opcode, inst[i].opcode) == 0) 
 			op_func = inst[i].f;
@@ -308,7 +310,7 @@ char *get_opcode(char *line_buf, instruction_t *inst, unsigned int line_num)
 {
 	unsigned int i;
 
-	for(i = 0; i < 7; i++)
+	for(i = 0; i < 16; i++)
 	{
 		if (strstr(line_buf, inst[i].opcode) == line_buf)
 			return (inst[i].opcode);
@@ -352,11 +354,15 @@ int opcode_req_arg(char *opcode)
 
 int main(int ac, const char **av)
 {
-	instruction_t inst[7] = {
+	instruction_t inst[16] = {
 		{"push", pushfunc}, {"pall", pallfunc},
 		{"pint", pintfunc}, {"pop", popfunc},
 		{"swap", swapfunc}, {"add", addfunc},
-		{"nop", nopfunc}
+		{"nop", nopfunc}, {"sub", subfunc},
+		{"div", divfunc}, {"mul", mulfunc},
+		{"mod", modfunc}, {"sub", subfunc},
+		{"pchar", pcharfunc}, {"pstr", pstrfunc},
+		{"rotl", rotlfunc}, {"rotr", rotrfunc}
 	};
 	int file, byte_read;
 	unsigned int line_num = 1;
