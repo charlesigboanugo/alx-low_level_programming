@@ -324,13 +324,11 @@ int *set_operand(char *line_buf, char *opcode, unsigned int line_num)
 	wtr = line_buf + strlen(opcode);
 	for (; *wtr != '\0'; wtr++)
 	{
-		printf ("%d\n", isdigit(wtr));
-		exit();
-		if (*wtr = '-')
+		if (*wtr == '-')
 			sign *= -1;
-		if (*wtr <= 57 && *wtr >= 48)
+		if (isdigit(*wtr))
 		{
-			operand =  (sign * atoi(wtr));
+			operand =  sign * atoi(wtr);
 			return (&operand);
 		}
 	}
