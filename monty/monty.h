@@ -1,5 +1,6 @@
 #ifndef MONTYH
 #define MONTYH
+#include <stddef.h>
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -31,6 +32,7 @@ typedef struct instruction_s
         void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-extern unsigned int size = -1;
-extern stack_t topstack = NULL;
+unsigned int size = 0;
+stack_t *topstack = NULL;
+int operand = 0;
 #endif // MONTYH

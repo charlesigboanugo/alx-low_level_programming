@@ -1,44 +1,268 @@
 #include "monty.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
-void pushfunc(stack_t **stack, unsigned int line_number)
+extern int operand;
+extern stack_t *stack;
+extern unsigned int size;
+static int func_err = 0;
+
+void free_stk(stack_t *stack)
 {
+	stack_t *ptr;
 
+	if (stack != NULL)
+	{
+		while (stack != NULL)
+		{
+			ptr = stack;
+			stack = stack->next;
+			free(ptr);
+		}
+	}
 }
 
-void pallfunc(stack_t **stack, unsigned int line_number)
+void print_err(char *errmsg, unsigned int line_num)
 {
-
+	fprintf(stderr, "L%u: %s\n", line_num, errmsg);
 }
 
-void pintfunc(stack_t **stack, unsigned int line_number)
+void clean_err_exit(int file, unsigned int line_num)
 {
-
+	if (close(file) == -1)
+		print_err("", line_num);
+	free_stk(topstack);
+	exit(EXIT_FAILURE);
 }
 
-void popfunc(stack_t **stack, unsigned int line_number)
+void pushfunc(stack_t **stack, unsigned int line_num)
 {
-
+	stack_t *ptr = NULL;
+	
+	ptr = malloc(sizeof(*ptr));
+	if (ptr == NULL)
+	{
+		fprintf(stderr, "Error: malloc failed\n");
+		func_err = -1;
+		return;
+	}
+	ptr->n = operand;
+	ptr->prev = NULL;
+	if (*stack != NULL)
+	{
+		(*stack)->prev = ptr;
+	}
+	ptr->next = *stack;
+	*stack = ptr;
+	size++;
 }
 
-void swapfunc(stack_t **stack, unsigned int line_number)
+void pallfunc(stack_t **stack, unsigned int line_num)
 {
+	stack_t *ptr = *stack;
 
+	for (; ptr != NULL; ptr = ptr->next)
+		printf("%i\n", ptr->n);		
 }
 
-void addfunc(stack_t **stack, unsigned int line_number)
+void pintfunc(stack_t **stack, unsigned int line_num)
 {
-
+	if (*stack != NULL)
+		printf("%i\n", (*stack)->n);		
+	else
+	{
+		print_err("can't pint, stack empty", line_num);
+		func_err = -1;
+	}
 }
 
-void nopfunc(stack_t **stack, unsigned int line_number)
+void popfunc(stack_t **stack, unsigned int line_num)
 {
+	stack_t *ptr = *stack;
 
+	if (ptr == NULL)
+	{
+		print_err("can't pop, stack empty", line_num);
+		func_err = -1;
+		return;
+	}
+	*stack = (*stack)->next;
+	free(ptr);
+	size--;
+}
+
+void swapfunc(stack_t **stack, unsigned int line_num)
+{
+	int n;
+
+	if (size < 2)
+	{
+		print_err("can't swap, stack too short", line_num);
+		func_err = -1;
+		return;
+	}
+	n = (*stack)->n;	
+	(*stack)->n = (*stack)->next->n; 	
+	(*stack)->next->n = n;
+}
+
+void addfunc(stack_t **stack, unsigned int line_num)
+{
+	if (size < 2)
+	{
+		print_err("can't add, stack too short", line_num);
+		func_err = -1;
+		return;
+	}
+	(*stack)->next->n = (*stack)->n + (*stack)->next->n;
+	popfunc(stack, line_num);
+}
+
+void nopfunc(stack_t **stack, unsigned int line_num)
+{
+	return;
+}
+
+void subfunc(stack_t **stack, unsigned int line_num)
+{
+	if (size < 2)
+	{
+		print_err("can't sub, stack too short", line_num);
+		func_err = -1;
+		return;
+	}
+	(*stack)->next->n = (*stack)->next->n - (*stack)->n;
+	popfunc(stack, line_num);
+}
+
+void divfunc(stack_t **stack, unsigned int line_num)
+{
+	if (size < 2)
+	{
+		print_err("can't div, stack too short", line_num);
+		func_err = -1;
+		return;
+	}
+	if ((*stack)->n == 0)
+	{
+		print_err("division by zero", line_num);
+		func_err = -1;
+		return;
+	}
+	(*stack)->next->n = (*stack)->next->n / (*stack)->n;
+	popfunc(stack, line_num);
+}
+
+void mulfunc(stack_t **stack, unsigned int line_num)
+{
+	if (size < 2)
+	{
+		print_err("can't mul, stack too short", line_num);
+		func_err = -1;
+		return;
+	}
+	(*stack)->next->n = (*stack)->n * (*stack)->next->n;
+	popfunc(stack, line_num);
+}
+
+void modfunc(stack_t **stack, unsigned int line_num)
+{
+	if (size < 2)
+	{
+		print_err("can't mod, stack too short", line_num);
+		func_err = -1;
+		return;
+	}
+	if ((*stack)->n == 0)
+	{
+		print_err("division by zero", line_num);
+		func_err = -1;
+		return;
+	}
+	(*stack)->next->n = (*stack)->next->n % (*stack)->n;
+	popfunc(stack, line_num);
+}
+
+void pcharfunc(stack_t **stack, unsigned int line_num)
+{
+	if (*stack == NULL)
+	{
+		print_err("can't pchar, stack empty", line_num);
+		func_err = -1;
+		return;
+	}
+	if ((*stack)->n < 0 || (*stack)->n > 127)
+	{
+		print_err("can't pchar, value out of range", line_num);
+		func_err = -1;
+		return;
+	}
+	printf("%c\n", (char) (*stack)->n);		
+}
+
+void pstrfunc(stack_t **stack, unsigned int line_num)
+{
+	stack_t *ptr = *stack;
+
+	for (; ptr != NULL; ptr = ptr->next)
+	{
+		if (ptr->n <= 0 || ptr->n > 127)
+			break;
+		printf("%c", (char) ptr->n);		
+	}
+	printf("\n");
+}
+
+void rotlfunc(stack_t **stack, unsigned int line_num)
+{
+	stack_t *ptr = *stack;
+	
+	if (ptr != NULL && ptr->next != NULL)
+	{
+		while (ptr->next->next != NULL)
+			ptr = ptr->next;
+		ptr->next = *stack;
+		*stack = (*stack)->next;
+		ptr->next->prev = ptr;
+		ptr->next->next = NULL;
+	}
+}
+
+void rotrfunc(stack_t **stack, unsigned int line_num)
+{
+	stack_t *ptr = *stack;
+	
+	if (ptr != NULL && ptr->next != NULL)
+	{
+		while (ptr->next->next != NULL)
+			ptr = ptr->next;
+		ptr->next = *stack;
+		ptr->prev = NULL;
+		(*stack)->prev = ptr;
+		*stack = ptr;
+	}
+}
+
+int exec_instr(instruction_t *inst, char *opcode, unsigned int line_num)
+{
+	void (*op_func)(stack_t **stack, unsigned int line_number);
+	unsigned int i;
+
+	for (i = 0; i < 7; i++)
+	{
+		if (strcmp(opcode, inst[i].opcode) == 0) 
+			op_func = inst[i].f;
+	}
+	op_func(&topstack, line_num);
+	if (func_err == -1)
+		return (-1);
+	return (0);
 }
 
 int read_trim_line(int file, char **line, unsigned int line_num)
@@ -50,8 +274,8 @@ int read_trim_line(int file, char **line, unsigned int line_num)
 	ptr = malloc(sizeof(*ptr) * 99);
 	if (ptr == NULL)
 	{
-		print_err();
-		return (-1)
+		fprintf(stderr, "Error: malloc failed\n");
+		return (-2);
 	}
 	*line = ptr;
 	while (byte != '\n' && index < 99)
@@ -59,8 +283,8 @@ int read_trim_line(int file, char **line, unsigned int line_num)
 		bytes_read = read(file, &byte, 1);
 		if (bytes_read == -1)
 		{
-			print_err();
-			return (-1);
+			print_err("", line_num);
+			return (-2);
 		}
 		if (bytes_read == 0)
 			break;
@@ -69,13 +293,15 @@ int read_trim_line(int file, char **line, unsigned int line_num)
 			ptr[index] = byte;
 			index++;
 		}	
-
 	}
-	if (index == 0 && bytes_read == 0)
-		return (EOF);
 	if (index == 0)
-		return (0)
-	return (index)
+	{
+		if (bytes_read == 0)
+			return (EOF);
+		return (0);
+	}
+	ptr[index] = '\0';
+	return (index);
 }
 
 char *get_opcode(char *line_buf, instruction_t *inst, unsigned int line_num)
@@ -84,46 +310,39 @@ char *get_opcode(char *line_buf, instruction_t *inst, unsigned int line_num)
 
 	for(i = 0; i < 7; i++)
 	{
-		if (strstr(line, inst[i]->opcode) == line)
-			return (inst[i]->opcode);
+		if (strstr(line_buf, inst[i].opcode) == line_buf)
+			return (inst[i].opcode);
 	}
-	print_err("", line_num);
+	print_err("unknown instruction", line_num);
 	return (NULL);
 }
-int *get_operand(char *line_buf, char *opcode, unsigned int line_num)
+int *set_operand(char *line_buf, char *opcode, unsigned int line_num)
 {
-	int operand, sign = 1;
-	char *ptr;
+	int sign = 1;
+	char *wtr = NULL;
 
-	ptr = line_buf + strlen(opcode);
-	for (; ptr != '\0'; ptr++)
+	wtr = line_buf + strlen(opcode);
+	for (; *wtr != '\0'; wtr++)
 	{
-		if (*ptr = '-')
+		printf ("%d\n", isdigit(wtr));
+		exit();
+		if (*wtr = '-')
 			sign *= -1;
-		if (isdigit(*ptr))
+		if (*wtr <= 57 && *wtr >= 48)
 		{
-			operand =  (sign * atoi(*ptr));
+			operand =  (sign * atoi(wtr));
 			return (&operand);
 		}
 	}
-	print_err("", line_num);
+	print_err("usage: push integer", line_num);
 	return (NULL);
 }
-int opcode_req_arg(opcode)
+int opcode_req_arg(char *opcode)
 {
 	if (strcmp(opcode, "push") == 0)
 		return 1;
 	return (0);
 }
-void clean_err_exit(int file, char *line)
-{
-	free_buff(line)
-	close(file);
-	free(topstack);
-	exit(EXIT_FAILURE);
-
-}
-
 
 /**
 * main - an interpreter for monty bytecode file
@@ -133,21 +352,25 @@ void clean_err_exit(int file, char *line)
 * Return: 0 if successful
 */
 
-int main(int ac, char **av)
-	instruction_t inst[7] = {{"push", "pushfunc"}, {"pall", "pallfunc"},
-				 {"pint", "pintfunc"}, {"pop", "popfunc"},
-				 {"swap", "swapfunc"}, {"add", "addfunc"},
-				 {"nop", "nopfunc"}};
-	int file, *operand = NULL, byte_read;
-	unsigned int line_num = 0;
-	char *opcode = NULL, *line == NULL;
+int main(int ac, const char **av)
+{
+	instruction_t inst[7] = {
+		{"push", pushfunc}, {"pall", pallfunc},
+		{"pint", pintfunc}, {"pop", popfunc},
+		{"swap", swapfunc}, {"add", addfunc},
+		{"nop", nopfunc}
+	};
+	int file, byte_read;
+	unsigned int line_num = 1;
+	char *opcode = NULL, *line = NULL;
+
 	if (ac != 2)
 	{
 		dprintf(STDERR_FILENO, "USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
 
-	file = open(*av[1], O_RDONLY);
+	file = open(av[1], O_RDONLY);
 	if (file == -1)
 	{
 		dprintf(STDIN_FILENO, "Error: Can't open file %s\n", av[1]);
@@ -156,10 +379,10 @@ int main(int ac, char **av)
 	
 	while (1)
 	{
-		free_buff(line);
+		free(line);
 		byte_read = read_trim_line(file, &line, line_num);
-		if (byte_read == -1)
-			clear_err_exit(file, line);
+		if (byte_read == -2)
+			clean_err_exit(file, line_num);
 		if (byte_read == EOF)
 			break;
 		if (byte_read == 0)
@@ -169,34 +392,19 @@ int main(int ac, char **av)
 		}
 		opcode = get_opcode(line, inst, line_num);
 		if (opcode == NULL)
-			clear_err_exit(file, line);
+			clean_err_exit(file, line_num);
 		if (opcode_req_arg(opcode))
 		{
-			operand = get_operand(line, opcode, line_num);
-			if (operand == NULL)
-				clear_err_exit(file, line);
+			if (set_operand(line, opcode, line_num) == NULL)
+				clean_err_exit(file, line_num);
 		}
-		if (exec_instr(opcode, operand, line_num) == -1)
-			clear_err_exit(file, line);
+		if (exec_instr(inst, opcode, line_num) == -1)
+			clean_err_exit(file, line_num);
 		line_num++;
-
 	}
-	free_buff(line);
-	close(file);
+	free(line);
 	free_stk(topstack);
+	if (close(file) == -1)
+		print_err("", line_num);
+	return (0);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
